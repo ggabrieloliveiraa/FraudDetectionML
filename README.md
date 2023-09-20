@@ -3,9 +3,9 @@
 
 ## Alunos
 * Jonathan Douglas
-* Gabriel
-* Helena
-* Mateus
+* Gabriel Oliveira
+* Helena Ferreira
+* Mateus Miranda
 
-## Professor
+## Professor(a)
 * Cristiane Neri
