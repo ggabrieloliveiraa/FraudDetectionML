@@ -2,10 +2,10 @@
 ## FraudDetectionML
 
 #Alunos
-.Jonathan Douglas
-.Gabriel
-.Helena
-.Mateus
+* Jonathan Douglas
+* Gabriel
+* Helena
+* Mateus
 
 #Professor
-.Cristiane Neri
+* Cristiane Neri
