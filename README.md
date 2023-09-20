@@ -1,11 +1,11 @@
 # Trabalho de IA - PUCMG - Ciência da Computação
 ## FraudDetectionML
 
-#Alunos
+## Alunos
 * Jonathan Douglas
 * Gabriel
 * Helena
 * Mateus
 
-#Professor
+## Professor
 * Cristiane Neri
