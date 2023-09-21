@@ -1,3 +1,15 @@
+"""
+Trabalho Prático 1 - Inteligência Artificial
+Ciência da Computação - Pontifícia Universidade Católica de Minas Gerais
+Professor(a): Cristiane Neri
+
+Grupo 1:
+Eric Ferreira
+Gabriel Oliveira
+Helena Ferreira
+Mateus Leal
+Jonathan Douglas
+"""
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier
@@ -9,7 +21,6 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sns
 import numpy as np
 from sklearn import tree
-
 
 def cm_analysis(y_true, y_pred, filename, labels, ymap=None, figsize=(10,10)):
     """
@@ -63,7 +74,7 @@ Y = db['fraud']
 X_treino, X_teste, y_treino, y_teste = train_test_split(X, Y, test_size=0.5, stratify=Y, random_state=23)
 
 # Treinando o modelo DecisionTreeClassifier
-modelo = DecisionTreeClassifier(criterion='entropy', max_depth=3)
+modelo = DecisionTreeClassifier(criterion='entropy', max_depth=4)
 modelo.fit(X_treino, y_treino)
 
 # Realizando previsões no conjunto de teste
@@ -99,17 +110,15 @@ plt.ylabel('F1-score')
 plt.title('Curva de F1-score vs. Precisão')
 
 plt.tight_layout()
-#plt.show()
-plt.savefig("graficos.png", format="png")
+plt.savefig("images/graficos.png", format="png")
 # Matriz de Confusão
 cm = ConfusionMatrix(modelo)
 cm.score(X_teste, y_teste)
 print(classification_report(y_teste, previsoes))
-#confusion_matrix.show()
 # Salvar a matriz de confusão em um arquivo
-cm_analysis(y_teste, previsoes,'confusion_matrix2.png', ['0', '1'])
-#cm.show()
+cm_analysis(y_teste, previsoes,'images/confusion_matrix2.png', ['0', '1'])
 previsores = ['distance_from_home','distance_from_last_transaction','ratio_to_median_purchase_price','repeat_retailer','used_chip', 'used_pin_number','online_order']
 plt.clf()
 tree.plot_tree(modelo, feature_names=previsores, class_names = ['Não fraude', 'Fraude'], filled=True)
-plt.savefig("arvore.svg", format="svg")
+plt.show()
+plt.savefig("images/arvore.svg", format="svg")
