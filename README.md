@@ -2,9 +2,10 @@
 ## FraudDetectionML
 
 ## Alunos
-* Jonathan Douglas
+* Eric Ferreira
 * Gabriel Oliveira
 * Helena Ferreira
+* Jonathan Douglas
 * Mateus Miranda
 
 ## Professor(a)
