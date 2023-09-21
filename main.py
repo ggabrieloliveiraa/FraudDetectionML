@@ -80,7 +80,7 @@ def main():
 
     # Salvar a matriz de confusão em um arquivo
     cm_analysis(
-        y_teste, previsoes, "images/confusion_matrix2.png", ["Não fraude", "Fraude"]
+        y_teste, previsoes, "images/confusion_matrix.png", ["Não fraude", "Fraude"]
     )
 
     previsores = [
@@ -112,7 +112,7 @@ def main():
     # print(classification_report(y_teste, previsoes))
     visualizer = ClassificationReport(modelo, is_fitted=True)
     visualizer.score(x_teste, y_teste)
-    visualizer.show()
+    visualizer.show("images/classification.svg", clear_figure=True)
 
 
 # Função Principal
