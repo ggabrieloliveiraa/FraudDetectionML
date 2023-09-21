@@ -10,23 +10,26 @@ Helena Ferreira
 Mateus Leal
 Jonathan Douglas
 """
-import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import precision_recall_curve, average_precision_score
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-from yellowbrick.classifier import ConfusionMatrix
-from sklearn.metrics import confusion_matrix
-import seaborn as sns
 import numpy as np
+import pandas as pd
+import seaborn as sns
 from sklearn import tree
+from sklearn.metrics import (
+    classification_report,
+    confusion_matrix,
+    precision_recall_curve,
+)
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from yellowbrick.classifier import ConfusionMatrix
 
-def cm_analysis(y_true, y_pred, filename, labels, ymap=None, figsize=(10,10)):
+
+def cm_analysis(y_true, y_pred, filename, labels, ymap=None, figsize=(10, 10)):
     """
     Generate matrix plot of confusion matrix with pretty annotations.
     The plot image is saved to disk.
-    args: 
+    args:
       y_true:    true label of the data, with shape (nsamples,)
       y_pred:    prediction of the data, with shape (nsamples,)
       filename:  filename of figure file to save
@@ -53,28 +56,31 @@ def cm_analysis(y_true, y_pred, filename, labels, ymap=None, figsize=(10,10)):
             p = cm_perc[i, j]
             if i == j:
                 s = cm_sum[i]
-                annot[i, j] = '%.1f%%\n%d/%d' % (p, c, s)
+                annot[i, j] = "%.1f%%\n%d/%d" % (p, c, s)
             elif c == 0:
-                annot[i, j] = ''
+                annot[i, j] = ""
             else:
-                annot[i, j] = '%.1f%%\n%d' % (p, c)
+                annot[i, j] = "%.1f%%\n%d" % (p, c)
     cm = pd.DataFrame(cm, index=labels, columns=labels)
-    cm.index.name = 'Actual'
-    cm.columns.name = 'Predicted'
+    cm.index.name = "Actual"
+    cm.columns.name = "Predicted"
     fig, ax = plt.subplots(figsize=figsize)
-    sns.heatmap(cm, annot=annot, fmt='', ax=ax)
+    sns.heatmap(cm, annot=annot, fmt="", ax=ax)
     plt.savefig(filename)
 
+
 # Carregando o conjunto de dados
-db = pd.read_csv('card_transdata.csv')
+db = pd.read_csv("card_transdata.csv")
 X = db.iloc[:, 0:7].values
-Y = db['fraud']
+Y = db["fraud"]
 
 # Dividindo os dados em conjuntos de treinamento e teste
-X_treino, X_teste, y_treino, y_teste = train_test_split(X, Y, test_size=0.5, stratify=Y, random_state=23)
+X_treino, X_teste, y_treino, y_teste = train_test_split(
+    X, Y, test_size=0.5, stratify=Y, random_state=23
+)
 
 # Treinando o modelo DecisionTreeClassifier
-modelo = DecisionTreeClassifier(criterion='entropy', max_depth=4)
+modelo = DecisionTreeClassifier(criterion="entropy", max_depth=4)
 modelo.fit(X_treino, y_treino)
 
 # Realizando previsões no conjunto de teste
@@ -92,22 +98,22 @@ f1_score = 2 * (precision * recall) / (precision + recall)
 # Plotando os gráficos de Precisão, Recall e F1-score
 plt.figure(figsize=(10, 5))
 plt.subplot(131)
-plt.plot(recall, precision, marker='.')
-plt.xlabel('Recall')
-plt.ylabel('Precisão')
-plt.title('Curva de Precisão-Recall')
+plt.plot(recall, precision, marker=".")
+plt.xlabel("Recall")
+plt.ylabel("Precisão")
+plt.title("Curva de Precisão-Recall")
 
 plt.subplot(132)
-plt.plot(recall, f1_score, marker='.')
-plt.xlabel('Recall')
-plt.ylabel('F1-score')
-plt.title('Curva de F1-score vs. Recall')
+plt.plot(recall, f1_score, marker=".")
+plt.xlabel("Recall")
+plt.ylabel("F1-score")
+plt.title("Curva de F1-score vs. Recall")
 
 plt.subplot(133)
-plt.plot(precision, f1_score, marker='.')
-plt.xlabel('Precisão')
-plt.ylabel('F1-score')
-plt.title('Curva de F1-score vs. Precisão')
+plt.plot(precision, f1_score, marker=".")
+plt.xlabel("Precisão")
+plt.ylabel("F1-score")
+plt.title("Curva de F1-score vs. Precisão")
 
 plt.tight_layout()
 plt.savefig("images/graficos.png", format="png")
@@ -116,9 +122,19 @@ cm = ConfusionMatrix(modelo)
 cm.score(X_teste, y_teste)
 print(classification_report(y_teste, previsoes))
 # Salvar a matriz de confusão em um arquivo
-cm_analysis(y_teste, previsoes,'images/confusion_matrix2.png', ['0', '1'])
-previsores = ['distance_from_home','distance_from_last_transaction','ratio_to_median_purchase_price','repeat_retailer','used_chip', 'used_pin_number','online_order']
+cm_analysis(y_teste, previsoes, "images/confusion_matrix2.png", ["0", "1"])
+previsores = [
+    "distance_from_home",
+    "distance_from_last_transaction",
+    "ratio_to_median_purchase_price",
+    "repeat_retailer",
+    "used_chip",
+    "used_pin_number",
+    "online_order",
+]
 plt.clf()
-tree.plot_tree(modelo, feature_names=previsores, class_names = ['Não fraude', 'Fraude'], filled=True)
-plt.show()
+tree.plot_tree(
+    modelo, feature_names=previsores, class_names=["Não fraude", "Fraude"], filled=True
+)
+# plt.show()
 plt.savefig("images/arvore.svg", format="svg")
