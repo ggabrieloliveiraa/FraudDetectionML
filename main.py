@@ -91,7 +91,7 @@ def main():
 
     # Salvar a matriz de confusão em um arquivo
     cm_analysis(
-        y_teste, previsoes, "images/confusion_matrix.png", ["Fraude", "Não fraude"]
+        y_teste, previsoes, "images/confusion_matrix.png", ["Não fraude", "Fraude"]
     )
 
     previsores = [
