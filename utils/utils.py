@@ -42,8 +42,8 @@ def cm_analysis(y_true, y_pred, filename, labels, ymap=None, figsize=(10, 10)):
             else:
                 annot[i, j] = "%.1f%%\n%d" % (p, c)
     cm = pd.DataFrame(cm, index=labels, columns=labels)
-    cm.index.name = "Valor Real"
-    cm.columns.name = "Valor Previsto"
+    cm.index.name = "Valor Previsto"
+    cm.columns.name = "Valor Real"
     fig, ax = plt.subplots(figsize=figsize)
     sns.heatmap(cm, annot=annot, fmt="", ax=ax)
     plt.savefig(filename)

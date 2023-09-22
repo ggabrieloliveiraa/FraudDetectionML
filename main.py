@@ -10,8 +10,12 @@ Helena Ferreira
 Mateus Leal
 Jonathan Douglas
 """
+from collections import Counter
+
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+from imblearn.under_sampling import RandomUnderSampler
 from sklearn import tree
 from sklearn.metrics import precision_recall_curve
 from sklearn.model_selection import train_test_split
@@ -25,11 +29,14 @@ def main():
     # Carregando o conjunto de dados
     db = pd.read_csv("database/card_transdata.csv")
     X = db.iloc[:, 0:7].values
-    Y = db["fraud"]
+    Y = db.iloc[:, 7].values
+
+    rus = RandomUnderSampler(random_state=23)
+    x_resampled, y_resampled = rus.fit_resample(X, Y)
 
     # Dividindo os dados em conjuntos de treinamento e teste
     x_treino, x_teste, y_treino, y_teste = train_test_split(
-        X, Y, test_size=0.5, stratify=Y, random_state=23
+        x_resampled, y_resampled, test_size=0.5, stratify=y_resampled, random_state=23
     )
 
     # Treinando o modelo DecisionTreeClassifier
@@ -42,31 +49,30 @@ def main():
     # Calculando as probabilidades da classe positiva (fraude)
     probs = modelo.predict_proba(x_teste)[:, 1]
 
-    # Calculando a precisão e o recall
-    precision, recall, _ = precision_recall_curve(y_teste, probs)
-
-    # Calculando o F1-score
+    # Calculando a precisão, recall e f1-score para cada threshold
+    precision, recall, thresholds = precision_recall_curve(y_teste, probs)
     f1_score = 2 * (precision * recall) / (precision + recall)
 
     # Plotando os gráficos de Precisão, Recall e F1-score
     plt.figure(figsize=(20, 5))
     plt.subplot(131)
-    plt.plot(recall, precision, marker=".")
+    plt.plot(recall, precision)
     plt.xlabel("Recall")
-    plt.ylabel("Precisão")
-    plt.title("Curva de Precisão-Recall")
+    plt.ylabel("Precision")
+    plt.title("Precision-Recall Curve")
 
     plt.subplot(132)
-    plt.plot(recall, f1_score, marker=".")
-    plt.xlabel("Recall")
-    plt.ylabel("F1-score")
-    plt.title("Curva de F1-score vs. Recall")
+    plt.plot(thresholds, recall[:-1], "b--", label="Recall")
+    plt.plot(thresholds, precision[:-1], "g-", label="Precision")
+    plt.xlabel("Threshold")
+    plt.legend(loc="lower left")
+    plt.title("Precision-Recall vs Threshold Curve")
 
     plt.subplot(133)
-    plt.plot(precision, f1_score, marker=".")
-    plt.xlabel("Precisão")
-    plt.ylabel("F1-score")
-    plt.title("Curva de F1-score vs. Precisão")
+    plt.plot(thresholds, f1_score[:-1], "r-", label="F1-score")
+    plt.xlabel("Threshold")
+    plt.legend(loc="lower left")
+    plt.title("F1-score vs Threshold Curve")
 
     # Salvar os gráficos em um arquivo
     plt.savefig("images/graficos.png", format="png")
@@ -80,7 +86,7 @@ def main():
 
     # Salvar a matriz de confusão em um arquivo
     cm_analysis(
-        y_teste, previsoes, "images/confusion_matrix.png", ["Não fraude", "Fraude"]
+        y_teste, previsoes, "images/confusion_matrix.png", ["Fraude", "Não fraude"]
     )
 
     previsores = [
@@ -100,7 +106,7 @@ def main():
     tree.plot_tree(
         modelo,
         feature_names=previsores,
-        class_names=["Não fraude", "Fraude"],
+        class_names=["Fraude", "Não fraude"],
         filled=True,
     )
 
