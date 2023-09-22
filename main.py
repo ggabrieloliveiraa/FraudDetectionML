@@ -39,6 +39,11 @@ def main():
         x_resampled, y_resampled, test_size=0.5, stratify=y_resampled, random_state=23
     )
 
+    Y_aux = np.delete(Y, rus.sample_indices_)
+    X_aux = np.delete(X, rus.sample_indices_, 0)
+    y_teste = np.concatenate((y_teste, Y_aux))
+    x_teste = np.concatenate((x_teste, X_aux))
+
     # Treinando o modelo DecisionTreeClassifier
     modelo = DecisionTreeClassifier(criterion="entropy", max_depth=4)
     modelo.fit(x_treino, y_treino)
