@@ -36,7 +36,7 @@ def main():
 
     # Dividindo os dados em conjuntos de treinamento e teste
     x_treino, x_teste, y_treino, y_teste = train_test_split(
-        x_resampled, y_resampled, test_size=0.5, stratify=y_resampled, random_state=23
+        x_resampled, y_resampled, test_size=0.2, stratify=y_resampled, random_state=23
     )
 
     Y_aux = np.delete(Y, rus.sample_indices_)
