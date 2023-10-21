@@ -1,5 +1,5 @@
 """
-Trabalho Prático 1 - Inteligência Artificial
+Trabalho Prático 2 - Inteligência Artificial
 Ciência da Computação - Pontifícia Universidade Católica de Minas Gerais
 Professor(a): Cristiane Neri
 
