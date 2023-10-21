@@ -10,11 +10,9 @@ Helena Ferreira
 Mateus Leal
 Jonathan Douglas
 """
+from sklearn.model_selection import RandomizedSearchCV
 from sklearn.preprocessing import StandardScaler
-
-from sklearn.model_selection import GridSearchCV
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.datasets import load_iris
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.utils import resample
 import pandas as pd
 from imblearn.over_sampling import SMOTE
@@ -103,46 +101,58 @@ train_distribution, test_distribution
 X_train_balanced = balanced_train_data.drop('fraud', axis=1)
 y_train_balanced = balanced_train_data['fraud']
 
-# Defina os hiperparâmetros que você deseja ajustar e a grade de valores
-param_grid = {
-    'criterion': ['gini', 'entropy'],
-    'splitter': ['best', 'random'],
-    'max_depth': [None, 5, 10, 15],
+
+# Initialize the scaler
+scaler = StandardScaler()
+
+# Fit the scaler to the training data and transform it
+X_train_scaled = scaler.fit_transform(X_train_balanced)
+# Transform the test data using the same scaler
+X_test_scaled = scaler.transform(X_test_original)
+
+# Treinar o modelo de Árvore de Decisão novamente
+# Definir a grade de hiperparâmetros e as distribuições
+param_dist = {
+    'n_estimators': [10, 20, 30, 40, 50],
+    'max_features': ['auto', 'sqrt'],
+    'max_depth': [10, 20, 30, 40, 50, None],
     'min_samples_split': [2, 5, 10],
     'min_samples_leaf': [1, 2, 4]
 }
 """
-# Crie um modelo de Decision Tree
-dtree = DecisionTreeClassifier()
+# Iniciar o Random Search
+modelo = RandomizedSearchCV(estimator=RandomForestClassifier(random_state=42),
+                                      param_distributions=param_dist,
+                                      n_iter=10, 
+                                      cv=3, 
+                                      verbose=1, 
+                                      random_state=42, 
+                                      n_jobs=-1)
 
-# Use Grid Search para encontrar os melhores hiperparâmetros
-grid_search = GridSearchCV(estimator=dtree, param_grid=param_grid, cv=5)
-grid_search.fit(X_train_balanced, y_train_balanced)
+# Ajustar o modelo
+modelo.fit(X_train_scaled, y_train_balanced)
 
-# Imprima os melhores hiperparâmetros encontrados
-print("=========================")
-print("Melhores Hiperparâmetros Encontrados:")
-print(grid_search.best_params_)
-
-# Obtenha o melhor modelo
-modelo = grid_search.best_estimator_
+# Obter os melhores hiperparâmetros
+best_params = modelo.best_params_
+print('======================================================================================')
+print(best_params)
+print('======================================================================================')
 """
-
-# Treinar o modelo de Árvore de Decisão novamente
-modelo = DecisionTreeClassifier(random_state=42, criterion='entropy', max_depth=3)
-modelo.fit(X_train_balanced, y_train_balanced)
-
+#modelo = RandomForestClassifier(random_state=42, n_estimators=100)
+#modelo.fit(X_train_balanced, y_train_balanced)
+modelo = RandomForestClassifier(random_state=42, n_estimators=30, min_samples_split=2, min_samples_leaf= 4, max_features='sqrt', max_depth= 10)
+modelo.fit(X_train_scaled, y_train_balanced)
 # Fazer previsões usando o conjunto de teste
-previsoes = modelo.predict(X_test_original)
+previsoes = modelo.predict(X_test_scaled)
 # Treinar o modelo de Árvore de Decisão novamente
-#modelo = DecisionTreeClassifier(random_state=42)
+#modelo = DecisionTreeClassifier(random_state=42, n_estimators=30, min_samples_split=2, min_samples_leaf= 4, max_features='sqrt', max_depth= 10)
 #modelo.fit(X_train_balanced, y_train_balanced)
 
 # Fazer previsões usando o conjunto de teste
 #previsoes = modelo.predict(X_test_original)
 
 # Calculando as probabilidades da classe positiva (fraude)
-probs = modelo.predict_proba(X_test_original)[:, 1]
+probs = modelo.predict_proba(X_test_scaled)[:, 1]
 
 # Calculando a precisão e o recall
 precision, recall, _ = precision_recall_curve(y_test_original, probs)
@@ -174,12 +184,9 @@ plt.tight_layout()
 plt.savefig("images/graficos.png", format="png")
 # Matriz de Confusão
 cm = ConfusionMatrix(modelo)
-cm.score(X_test_original, y_test_original)
+cm.score(X_test_scaled, y_test_original)
 print(classification_report(y_test_original, previsoes))
 # Salvar a matriz de confusão em um arquivo
 cm_analysis(y_test_original, previsoes,'images/confusion_matrix2.png', ['0', '1'])
-previsores = ['distance_from_last_transaction','distance_from_home','repeat_retailer','used_chip','used_pin_number']
 plt.clf()
-tree.plot_tree(modelo, feature_names=previsores, class_names = ['Não fraude', 'Fraude'], filled=True)
 plt.show()
-plt.savefig("images/arvore.svg", format="svg")
