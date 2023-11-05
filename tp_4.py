@@ -196,3 +196,4 @@ print(classification_report(y_test_original, previsoes_gb))
 cm_analysis(y_test_original, previsoes_gb, 'images/confusion_matrix_gradient_boosting.png', ['0', '1'])
 plt.clf()
 plt.show()
+

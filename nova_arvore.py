@@ -194,3 +194,4 @@ plt.clf()
 tree.plot_tree(modelo, feature_names=previsores, class_names = ['Não fraude', 'Fraude'], filled=True)
 plt.show()
 plt.savefig("images/arvore.svg", format="svg")
+
