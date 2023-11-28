@@ -198,6 +198,7 @@ probs = mlp.predict_proba(X_test_scaled)[:, 1]
 print("==============")
 print(probs)
 
+
 # Calculando a precisão e o recall para Gradient Boosting
 precision, recall, _ = precision_recall_curve(y_test_original, probs)
 
